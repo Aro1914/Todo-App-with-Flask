@@ -1,9 +1,9 @@
 python -m venv venv
 
-if [ -f venv/Scripts ]; then
+if [ -d venv/Scripts ]; then
     . venv/Scripts/activate
     venv/Scripts/python.exe -m pip install -r requirements.txt
-elif [ -f venv/bin ]; then
+elif [ -d venv/bin ]; then
     . venv/bin/activate
     venv/bin/python -m pip install -r requirements.txt
 fi
