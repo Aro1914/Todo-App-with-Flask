@@ -1,0 +1,453 @@
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo App</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        width: calc(70% - 20px) !important;
+        justify-content: space-evenly;
+        align-items: stretch;
+        flex-wrap: wrap;
+        padding: 10px;
+        gap: 30px;
+        min-height: 500px;
+        margin: 0 auto;
+        border-radius: 5px;
+        background-color: rgba(237, 237, 237, 0.634);
+      }
+
+      .list-container {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        width: 35%;
+      }
+
+      .list-item {
+        cursor: pointer;
+      }
+
+      .todo-container {
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        /* border: 2px solid #000; */
+        text-align: center;
+        background-color: rgba(204, 204, 204, 0.566);
+        /* width: 50%; */
+        flex: 1;
+      }
+
+      .todos {
+        list-style-type: none;
+        padding: 0;
+        width: 100%;
+        text-align: left;
+        flex: 1;
+      }
+
+      .messages {
+        color: red;
+        transition: opacity 2s;
+        margin: 10px 0 0 0;
+      }
+
+      .invisible {
+        opacity: 0;
+      }
+
+      .success {
+        color: green !important;
+      }
+
+      .list-name,
+      .description {
+        width: 100%;
+        padding: 5px;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+
+      .todo-container form {
+        margin-bottom: 0;
+      }
+
+      .todos li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
+      .todos li div {
+        flex: 1;
+      }
+
+      .todos li div+span {
+        display: inline-block;
+        font-weight: 900;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: red;
+      }
+
+      .title-container {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 5px;
+      }
+
+      .title-div {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        width: 50%;
+        align-items: flex-start;
+      }
+
+      .button {
+        background-color: #fff;
+        border: 0;
+        font-family: inherit;
+        box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2);
+        padding: 5px;
+        border-radius: 5px;
+      }
+
+      .title-div h3 {
+        margin: 0;
+      }
+
+      .button:hover {
+        box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .button:active {
+        box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1),
+          0 0 2px 2px inset rgba(0, 0, 0, 0.1);
+      }
+
+      .list-item {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0;
+        flex-wrap: wrap;
+      }
+
+      .list-item span {
+        display: inline-block;
+      }
+
+      .list-delete {
+        margin-left: auto;
+        cursor: pointer;
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="list-container">
+        <h2>Lists</h2>
+        <form style="width: 100%;">
+          <input type="text" style="margin-bottom: 10px; width: 100%;" class="list-name"
+            placeholder="Name of the list" />
+          <button class="button" style="width: 100%;" type="submit">Create a List</button>
+        </form>
+        <ul style="padding: 0" class="lists"> {% for item in list %} <li class="list-item" id="_{{item.id}}">
+            <span data-id="{{item.id}}">{{item.name}}</span>
+            <span class="list-delete" data-id="{{item.id}}">&cross;</span>
+          </li> {% endfor%} </ul>
+      </div>
+      <div class="todo-container">
+        <form>
+          <div class="title-container">
+            <div class="title-div">
+              <h3 id="{{list_id}}">{{name}}</h3>
+              <!-- <button type="button" class="button">Rename</button> -->
+            </div>
+            <input type="submit" value="Add To-Do" class="button" />
+          </div>
+          <input type="text" name="description" class="description" placeholder="Write something..." />
+          <h4 class="messages invisible">Create a Todo</h4>
+        </form>
+        <ul class="todos"> {% for todo in data %} <li id="_{{todo.id}}">
+            <div>
+              <input type="checkbox" name="completed" {% if todo.completed%} checked {% endif %}
+                data-id="{{todo.id}}" />
+              <span>{{ todo.description }}</span>
+            </div>
+            <span data-id="{{todo.id}}">&cross;</span>
+          </li> {% endfor%} </ul>
+        <button type="button" class="button complete-all">Complete All</button>
+      </div>
+    </div>
+    <script>
+      const messages = document.querySelector(".messages");
+      const displayMessage = t => {
+        if (t) {
+          messages.textContent = "Success";
+          messages.classList.add("success");
+          messages.classList.remove("invisible");
+        } else if (t != null) {
+          messages.textContent = "Unsuccessful";
+          messages.classList.remove("success");
+          messages.classList.remove("invisible");
+        } else {
+          messages.textContent = "Please enter a message!";
+          messages.classList.remove("success");
+          messages.style.color = "#000";
+          messages.classList.remove("invisible");
+        }
+        const timeout = setTimeout(() => {
+          messages.classList.add("invisible");
+          clearTimeout(timeout);
+        }, 1000);
+        // return timeout;
+      };
+
+      const listItems = document.querySelectorAll(".list-item span:first-of-type");
+      listItems.forEach(el => {
+        el.addEventListener("click", () => {
+          listId = el.getAttribute('data-id');
+          window.location = `/todo-list/${listId}`;
+        });
+      });
+
+
+      const checkboxes = document.querySelectorAll(".todos input");
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", e => {
+          const completed = e.target.checked;
+          const todoId = e.target.dataset["id"];
+          fetch(`/todo/${todoId}/update`, {
+            method: "POST",
+            body: JSON.stringify({
+              completed: completed
+            }),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
+            .then(res => res.json())
+            .then(data => {
+              e.target.checked = data.completed;
+              displayMessage(true);
+            })
+            .catch(err => {
+              displayMessage(false);
+            });
+        });
+      });
+
+      const completeAllBtn = document.querySelector(".complete-all");
+      completeAllBtn.addEventListener("click", () => {
+        fetch(`/todo/update-all`, {
+          method: "POST",
+          body: JSON.stringify({ body: "body" }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.successful) {
+              document
+                .querySelectorAll(".todos input[type='checkbox']")
+                .forEach(el => (el.checked = true));
+              displayMessage(true);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            displayMessage(false);
+          });
+      });
+
+
+      const listDeletes = document.querySelectorAll('.list-delete');
+      listDeletes.forEach(el => {
+        el.addEventListener('click', () => {
+          const listId = el.getAttribute('data-id');
+          fetch(`/todo/todo-list/${listId}/delete`, {
+            method: "DELETE"
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.successful) {
+                const currentListID = Number(document.querySelector(".title-div h3").getAttribute("id"));
+                if (currentListID == listId) {
+                  window.location = `/`;
+                }
+                document.querySelector(`.lists li#_${listId}`).style.display = "none";
+                displayMessage(true);
+              }
+            })
+            .catch(displayMessage(false));
+        });
+      });
+
+      const deleteButtons = document.querySelectorAll(".todos li div + span");
+      deleteButtons.forEach(button => {
+        button.addEventListener("click", e => {
+          const todoId = e.target.dataset["id"];
+          const parent = document.querySelector(".todos li");
+          fetch(`/todo/${todoId}/delete`, {
+            method: "DELETE"
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.successful) {
+                document.querySelector(`#_${todoId}`).style.display = "none";
+                displayMessage(true);
+              }
+            })
+            .catch(displayMessage(false));
+        });
+      });
+
+      document.querySelector(".list-container form").onsubmit = function (e) {
+        e.preventDefault();
+        if (document.querySelector(".list-name").value) {
+          fetch("/todo/create-list", {
+            method: "POST",
+            body: JSON.stringify({
+              name: document.querySelector(".list-name").value
+            }),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
+            .then(res => res.json())
+            .then(data => {
+              const listId = data.id;
+              const listItem = document.createElement("li");
+              listItem.setAttribute("id", `_${listId}`);
+              listItem.classList.add('list-item');
+              const listName = document.createElement("span");
+              listName.addEventListener("click", () => {
+                window.location = `/todo-list/${data.id}`;
+              });
+              const listDelete = document.createElement("span");
+              listDelete.classList.add('list-delete');
+              listDelete.innerHTML = "&cross;";
+              listDelete.addEventListener("click", () => {
+                fetch(`/todo/todo-list/${data.id}/delete`, {
+                  method: "DELETE"
+                })
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.successful) {
+                      document.querySelector(`.lists li#_${listId}`).style.display = "none";
+                      displayMessage(true);
+                    }
+                  })
+                  .catch(displayMessage(false));
+              });
+              listName.textContent = ` ${data.name}`;
+              listItem.append(listName, listDelete);
+              document.querySelector(".lists").append(listItem);
+              displayMessage(true);
+            })
+            .catch(error => {
+              console.log(error);
+              displayMessage(false);
+            });
+        } else displayMessage();
+      };
+
+      document.querySelector(".todo-container form").onsubmit = function (e) {
+        e.preventDefault();
+        if (document.querySelector(".description").value) {
+          fetch("/todo/create", {
+            method: "POST",
+            body: JSON.stringify({
+              description: document.querySelector(".description").value,
+              todolist_id: document
+                .querySelector(".title-div h3")
+                .getAttribute("id")
+            }),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
+            .then(res => res.json())
+            .then(data => {
+              const todoId = data.id;
+              const newTodo = document.createElement("li");
+              newTodo.setAttribute("id", `_${todoId}`);
+              const container = document.createElement("div");
+              const checker = document.createElement("input");
+              const description = document.createElement("span");
+              const deleteButton = document.createElement("span");
+              deleteButton.innerHTML = "&cross;";
+              deleteButton.addEventListener("click", () => {
+                fetch(`/todo/${todoId}/delete`, {
+                  method: "POST"
+                })
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.successful) {
+                      document.querySelector(`.todos li#_${todoId}`).style.display =
+                        "none";
+                      displayMessage(true);
+                    }
+                  })
+                  .catch(displayMessage(false));
+              });
+              checker.setAttribute("type", "checkbox");
+              checker.setAttribute("data-id", todoId);
+              checker.addEventListener("change", e => {
+                fetch(`/todo/${todoId}/update`, {
+                  method: "POST",
+                  body: JSON.stringify({
+                    completed: e.target.checked
+                  }),
+                  headers: {
+                    "Content-Type": "application/json"
+                  }
+                })
+                  .then(res => res.json())
+                  .then(result => (e.target.checked = result.completed))
+                  .catch(error => console.log(error));
+              });
+              description.textContent = ` ${data.description}`;
+              container.append(checker, description);
+              newTodo.append(container, deleteButton);
+              document.querySelector(".todos").append(newTodo);
+              displayMessage(true);
+            })
+            .catch(error => {
+              console.log(error);
+              displayMessage(false);
+            });
+        } else displayMessage();
+      }
+    </script>
+  </body>
+
+</html>
