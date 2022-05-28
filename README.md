@@ -5,8 +5,10 @@ This is a not so simple todo application that implements CRUD functionality. You
 ## Usage
 
 1. Go to line 8 of the `app.py` file and modify the SQLALCHEMY_DATABASE_URI app configuration to match the database connection settings you have set up in your machine.
+   Follow this format:
+   ![Format for setting the SQLALCHEMY_DATABASE_URI app configuration](https://video.udacity-data.com/topher/2019/August/5d4df44e_database-connection-uri-parts/database-connection-uri-parts.png)
 
-2. On your terminal, `cd` to the project directory and run:
+2. Now, on your terminal, `cd` to the project directory and run:
 
 ```bash
 >>$ source .bash
