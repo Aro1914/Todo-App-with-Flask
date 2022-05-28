@@ -112,12 +112,12 @@ def update_todo(todo_id):
         return jsonify(body)
 
 
-@app.route('/todo/update-all', methods=['POST'])
-def update_all():
+@app.route('/todo/<list_id>/update-all', methods=['POST'])
+def update_all(list_id):
     error = False
     body = {}
     try:
-        todos = Todo.query.all()
+        todos = Todo.query.filter_by(todolist_id=list_id).all()
         for todo in todos:
             todo.completed = True
         db.session.commit()

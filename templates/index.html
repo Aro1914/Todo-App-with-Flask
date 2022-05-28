@@ -266,7 +266,8 @@
 
       const completeAllBtn = document.querySelector(".complete-all");
       completeAllBtn.addEventListener("click", () => {
-        fetch(`/todo/update-all`, {
+        const listId = document.querySelector(".title-div h3").getAttribute("id");
+        fetch(`/todo/${listId}/update-all`, {
           method: "POST",
           body: JSON.stringify({ body: "body" }),
           headers: {
