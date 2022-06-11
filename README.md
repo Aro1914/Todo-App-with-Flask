@@ -23,8 +23,8 @@ This is a not so simple todo application that implements CRUD functionality. You
 
 3. Now, on your terminal, `cd` to the project directory and run:
 
-```bash
->>$ source .bash
-```
+   ```bash
+   >>$ source .bash
+   ```
 
 And that should do it. Have fun with the app.
