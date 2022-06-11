@@ -43,8 +43,8 @@ class Todo(db.Model):
 # db.create_all()
 
 
-@app.route('/todo/create', methods=['POST'])
-def create_todo():
+@app.route('/todos/<todolist_id>', methods=['POST'])
+def create_todo(todolist_id):
     error = False
     body = {}
     try:
@@ -67,7 +67,7 @@ def create_todo():
         return jsonify(body)
 
 
-@app.route('/todo/create-list', methods=['POST'])
+@app.route('/todos', methods=['POST'])
 def create_list():
     error = False
     body = {}
@@ -90,8 +90,9 @@ def create_list():
         return jsonify(body)
 
 
-@app.route('/todo/<todo_id>/update', methods=['POST'])
-def update_todo(todo_id):
+@app.route('/todos/<list_id>/<todo_id>', methods=['PATCH'])
+def update_todo(list_id, todo_id):
+    print(list_id)
     error = False
     body = {}
     try:
@@ -112,7 +113,7 @@ def update_todo(todo_id):
         return jsonify(body)
 
 
-@app.route('/todo/<list_id>/update-all', methods=['POST'])
+@app.route('/todos/<list_id>', methods=['PUT'])
 def update_all(list_id):
     error = False
     body = {}
@@ -134,8 +135,9 @@ def update_all(list_id):
         return jsonify(body)
 
 
-@app.route('/todo/<todo_id>/delete', methods=["DELETE"])
-def delete_todo(todo_id):
+@app.route('/todos/<list_id>/<todo_id>', methods=["DELETE"])
+def delete_todo(list_id, todo_id):
+    print(list_id)
     error = False
     body = {}
     try:
@@ -157,7 +159,7 @@ def delete_todo(todo_id):
         return jsonify(body)
 
 
-@app.route('/todo/todo-list/<list_id>/delete', methods=["DELETE"])
+@app.route('/todos/<list_id>', methods=["DELETE"])
 def delete_list(list_id):
     error = False
     body = {}
@@ -180,7 +182,7 @@ def delete_list(list_id):
         return jsonify(body)
 
 
-@app.route('/todo-list/<list_id>')
+@app.route('/todos/<list_id>')
 def get_todo_list(list_id):
     dummyTodoList = [
         {

@@ -234,7 +234,7 @@
       listItems.forEach(el => {
         el.addEventListener("click", () => {
           listId = el.getAttribute('data-id');
-          window.location = `/todo-list/${listId}`;
+          window.location = `/todos/${listId}`;
         });
       });
 
@@ -243,9 +243,10 @@
       checkboxes.forEach(checkbox => {
         checkbox.addEventListener("change", e => {
           const completed = e.target.checked;
+          const listId = document.querySelector(".title-div h3").getAttribute("id");
           const todoId = e.target.dataset["id"];
-          fetch(`/todo/${todoId}/update`, {
-            method: "POST",
+          fetch(`/todos/${listId}/${todoId}`, {
+            method: "PATCH",
             body: JSON.stringify({
               completed: completed
             }),
@@ -267,8 +268,8 @@
       const completeAllBtn = document.querySelector(".complete-all");
       completeAllBtn.addEventListener("click", () => {
         const listId = document.querySelector(".title-div h3").getAttribute("id");
-        fetch(`/todo/${listId}/update-all`, {
-          method: "POST",
+        fetch(`/todos/${listId}`, {
+          method: "PUT",
           body: JSON.stringify({ body: "body" }),
           headers: {
             "Content-Type": "application/json"
@@ -294,7 +295,7 @@
       listDeletes.forEach(el => {
         el.addEventListener('click', () => {
           const listId = el.getAttribute('data-id');
-          fetch(`/todo/todo-list/${listId}/delete`, {
+          fetch(`/todos/${listId}`, {
             method: "DELETE"
           })
             .then(res => res.json())
@@ -316,8 +317,9 @@
       deleteButtons.forEach(button => {
         button.addEventListener("click", e => {
           const todoId = e.target.dataset["id"];
+          const listId = document.querySelector(".title-div h3").getAttribute("id");
           const parent = document.querySelector(".todos li");
-          fetch(`/todo/${todoId}/delete`, {
+          fetch(`/todos/${listId}/${todoId}`, {
             method: "DELETE"
           })
             .then(res => res.json())
@@ -333,8 +335,9 @@
 
       document.querySelector(".list-container form").onsubmit = function (e) {
         e.preventDefault();
+        const listId = document.querySelector(".title-div h3").getAttribute("id");
         if (document.querySelector(".list-name").value) {
-          fetch("/todo/create-list", {
+          fetch(`/todos`, {
             method: "POST",
             body: JSON.stringify({
               name: document.querySelector(".list-name").value
@@ -357,7 +360,7 @@
               listDelete.classList.add('list-delete');
               listDelete.innerHTML = "&cross;";
               listDelete.addEventListener("click", () => {
-                fetch(`/todo/todo-list/${data.id}/delete`, {
+                fetch(`/todos/${listId}`, {
                   method: "DELETE"
                 })
                   .then(res => res.json())
@@ -383,14 +386,13 @@
 
       document.querySelector(".todo-container form").onsubmit = function (e) {
         e.preventDefault();
+        const listId = document.querySelector(".title-div h3").getAttribute("id");
         if (document.querySelector(".description").value) {
-          fetch("/todo/create", {
+          fetch(`/todos/${listId}`, {
             method: "POST",
             body: JSON.stringify({
               description: document.querySelector(".description").value,
-              todolist_id: document
-                .querySelector(".title-div h3")
-                .getAttribute("id")
+              todolist_id: listId
             }),
             headers: {
               "Content-Type": "application/json"
@@ -407,8 +409,8 @@
               const deleteButton = document.createElement("span");
               deleteButton.innerHTML = "&cross;";
               deleteButton.addEventListener("click", () => {
-                fetch(`/todo/${todoId}/delete`, {
-                  method: "POST"
+                fetch(`/todos/${listId}/${todoId}`, {
+                  method: "DELETE"
                 })
                   .then(res => res.json())
                   .then(data => {
@@ -423,8 +425,8 @@
               checker.setAttribute("type", "checkbox");
               checker.setAttribute("data-id", todoId);
               checker.addEventListener("change", e => {
-                fetch(`/todo/${todoId}/update`, {
-                  method: "POST",
+                fetch(`/todos/${listId}/${todoId}`, {
+                  method: "PATCH",
                   body: JSON.stringify({
                     completed: e.target.checked
                   }),
